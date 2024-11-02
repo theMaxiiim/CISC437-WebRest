@@ -4,15 +4,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore;
 using WebRestEF.EF.Data;
 using WebRestEF.EF.Models;
-
+using WebRest.Interfaces;
 namespace WebRest.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GendersController : ControllerBase
+    public class GendersController : ControllerBase, iController<Gender>
     {
         private readonly WebRestOracleContext _context;
 
@@ -23,14 +24,15 @@ namespace WebRest.Controllers
 
         // GET: api/Genders
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Gender>>> GetGenders()
+        public async Task<ActionResult<IEnumerable<Gender>>> Get()
         {
             return await _context.Genders.ToListAsync();
         }
 
         // GET: api/Genders/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Gender>> GetGender(string id)
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<ActionResult<Gender>> Get(string id)
         {
             var gender = await _context.Genders.FindAsync(id);
 
@@ -45,14 +47,15 @@ namespace WebRest.Controllers
         // PUT: api/Genders/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutGender(string id, Gender gender)
+        public async Task<IActionResult> Put(string id, Gender gender)
         {
             if (id != gender.GenderId)
             {
                 return BadRequest();
             }
+            _context.Genders.Update(gender);
 
-            _context.Entry(gender).State = EntityState.Modified;
+
 
             try
             {
@@ -76,7 +79,7 @@ namespace WebRest.Controllers
         // POST: api/Genders
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Gender>> PostGender(Gender gender)
+        public async Task<ActionResult<Gender>> Post(Gender gender)
         {
             _context.Genders.Add(gender);
             await _context.SaveChangesAsync();
@@ -86,7 +89,7 @@ namespace WebRest.Controllers
 
         // DELETE: api/Genders/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteGender(string id)
+        public async Task<IActionResult> Delete(string id)
         {
             var gender = await _context.Genders.FindAsync(id);
             if (gender == null)
