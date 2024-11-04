@@ -11,6 +11,10 @@ builder.Services.AddDbContext<WebRestOracleContext>
     .UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()))
     );
 
+builder.Services.AddControllersWithViews()
+    .AddNewtonsoftJson(options =>
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+);
 
 builder.Services.AddControllers();
 
